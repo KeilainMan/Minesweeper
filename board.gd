@@ -149,6 +149,7 @@ func on_tile_left_clicked(tile: TextureRect) -> void:
 	if tile.get("surrounding_bombs") == 0:
 		open_connected_zero_bomb_tiles(tile)
 
+
 func solve_tile_when_fully_flagged(tile: TextureRect) -> void:
 	var near_fields: Array = find_near_fields(tile, true)
 	var flags: int = 0
@@ -159,6 +160,8 @@ func solve_tile_when_fully_flagged(tile: TextureRect) -> void:
 		for field in near_fields:
 			if !field.get("is_marked"):
 				field.set("is_open", true)
+				if field.get("surrounding_bombs") == 0:
+					open_connected_zero_bomb_tiles(field)
 				if field.get("is_bomb"):
 					field.modulate = Color.RED
 					finish_game()
