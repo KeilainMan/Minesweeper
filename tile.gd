@@ -22,6 +22,7 @@ var size_x: int = 32:
 	set(value):
 		x = value
 		size.x = value
+		surrounding_bombs_number.add_theme_font_size_override("font_size", value * 0.9)
 var size_y: int = 32:
 	get:
 		return y
@@ -46,6 +47,20 @@ var surrounding_bombs: int = 0:
 	set(value):
 		surrounding_bombs = value
 		surrounding_bombs_number.text = str(value)
+		if value == 1:
+			surrounding_bombs_number.self_modulate = Color.BLUE
+		elif value == 2:
+			surrounding_bombs_number.modulate = Color.RED
+		elif value == 3:
+			surrounding_bombs_number.modulate = Color.GREEN
+		elif value == 4:
+			surrounding_bombs_number.modulate = Color.ORANGE
+		elif value == 5:
+			surrounding_bombs_number.modulate = Color.TEAL
+		elif value == 6:
+			surrounding_bombs_number.modulate = Color.DARK_ORCHID
+		elif value == 7:
+			surrounding_bombs_number.modulate = Color.PURPLE
 var is_edge_tile: bool = false:
 	get:
 		return is_edge_tile

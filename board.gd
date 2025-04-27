@@ -23,8 +23,8 @@ const TILE: PackedScene = preload("res://tile.tscn")
 ################################################################################
 const GRID_DIM_X: int = 30
 const GRID_DIM_Y: int = 20
-const GRID_FIELDSIZE_X: int = 16
-const GRID_FIELDSIZE_Y: int = 16
+const GRID_FIELDSIZE_X: int = 32
+const GRID_FIELDSIZE_Y: int = 32
 
 var grid_pos: Array = []
 var grid_tiles: Array = []
@@ -69,6 +69,8 @@ func install_tiles() -> void:
 		for pos in grid_pos[n]:
 			var tile: TextureRect = TILE.instantiate()
 			add_child(tile)
+			tile.set("size_x", GRID_FIELDSIZE_X)
+			tile.set("size_y", GRID_FIELDSIZE_Y)
 			tile.x = pos[0]
 			tile.y = pos[1]
 			temp_row.append(tile)
@@ -137,10 +139,30 @@ func on_tile_left_clicked(tile: TextureRect) -> void:
 		is_first_click = false
 		place_bombs(tile)
 	if tile.get("is_bomb"):
+		tile.modulate = Color.RED
 		finish_game()
 		return
+	if tile.get("is_open"):
+		solve_tile_when_fully_flagged(tile)
+		return
 	tile.set("is_open", true)
-	open_connected_zero_bomb_tiles(tile)
+	if tile.get("surrounding_bombs") == 0:
+		open_connected_zero_bomb_tiles(tile)
+
+func solve_tile_when_fully_flagged(tile: TextureRect) -> void:
+	var near_fields: Array = find_near_fields(tile, true)
+	var flags: int = 0
+	for field in near_fields:
+		if field.get("is_marked"):
+			flags += 1
+	if flags == tile.get("surrounding_bombs"):
+		for field in near_fields:
+			if !field.get("is_marked"):
+				field.set("is_open", true)
+				if field.get("is_bomb"):
+					field.modulate = Color.RED
+					finish_game()
+					return
 
 
 func open_connected_zero_bomb_tiles(tile: TextureRect) -> void:
